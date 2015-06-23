@@ -2,7 +2,7 @@
 import pygame
 
 from quiz import quiz
- 
+
 class Question(pygame.sprite.Sprite):
     def __init__(self, question_text):
         font = pygame.font.Font(None, 36)
@@ -45,6 +45,21 @@ class Feedback(pygame.sprite.Sprite):
         self.image = box
         self.rect = ((44,550),(400,32))
 
+class ScoreBox(pygame.sprite.Sprite):
+    def __init__(self, text="00:00"):
+        font = pygame.font.Font(None, 36)
+        pygame.sprite.Sprite.__init__(self)
+        box = pygame.Surface((150,32))
+        text = font.render(text, 1, (0, 0, 0))
+        textpos = text.get_rect()
+        #textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
+        box.fill(gray)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((640,50),(150,32))
+
+       
 
 if  __name__ == "__main__":
     pygame.init()
@@ -76,6 +91,7 @@ if  __name__ == "__main__":
             sbox.image = box
             sbox.rect = ((i*46,j*38),(40,32)) 
             boxes.append(sbox)
+    scorebox = ScoreBox("Score: 0")
 
     running = True
     entered = ""
@@ -141,6 +157,9 @@ if  __name__ == "__main__":
         window.blit(answer.image, answer.rect)
         if feedback:
             window.blit(feedback.image, feedback.rect)
+        if scorebox:
+            window.blit(scorebox.image, scorebox.rect)
+
    
     
         pygame.display.update()

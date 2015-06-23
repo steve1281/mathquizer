@@ -2,6 +2,34 @@
 
 import pygame
 
+class Question(pygame.sprite.Sprite):
+    def __init__(self):
+        font = pygame.font.Font(None, 36)
+        pygame.sprite.Sprite.__init__(self)
+        box = pygame.Surface((140,32))
+        text = font.render("7 x 6 = ", 1, (10, 10, 20))
+        textpos = text.get_rect()
+        textpos.centerx = box.get_rect().centerx
+        box.fill(gray_red)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((40,500),(40,32))
+
+class Answer(pygame.sprite.Sprite):
+    def __init__(self):
+        font = pygame.font.Font(None, 36)
+        pygame.sprite.Sprite.__init__(self)
+        box = pygame.Surface((80,32))
+        text = font.render("", 1, (0, 0, 0))
+        textpos = text.get_rect()
+        textpos.centerx = box.get_rect().centerx
+        box.fill(white)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((185,500),(40,32))
+
+
+
 if  __name__ == "__main__":
     pygame.init()
 
@@ -40,7 +68,11 @@ if  __name__ == "__main__":
 	        running = False
         for b in boxes:
             window.blit(b.image,b.rect)
-        
+        question = Question() # generate a question
+        window.blit(question.image, question.rect)
+        answer = Answer() 
+        window.blit(answer.image, answer.rect)
+    
         pygame.display.update()
         pos = pygame.mouse.get_pos()
         for i in range(len(boxes)):

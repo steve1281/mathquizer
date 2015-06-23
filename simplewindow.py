@@ -2,12 +2,25 @@
 
 import pygame
 
+
+quiz = [
+         {'question': "7 x 6", 'answer': 42 },
+         {'question': "7 x 5", 'answer': 35 },
+         {'question': "7 x 4", 'answer': 28 },
+         {'question': "7 x 3", 'answer': 21 },
+         {'question': "7 x 2", 'answer': 14 },
+         {'question': "7 x 1", 'answer': 7 },
+         {'question': "8 x 2", 'answer': 16 },
+         {'question': "8 x 3", 'answer': 24 },
+         {'question': "8 x 4", 'answer': 32 },
+]
+ 
 class Question(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, question_text):
         font = pygame.font.Font(None, 36)
         pygame.sprite.Sprite.__init__(self)
         box = pygame.Surface((140,32))
-        text = font.render("7 x 6 = ", 1, (10, 10, 20))
+        text = font.render(question_text + " = ", 1, (10, 10, 20))
         textpos = text.get_rect()
         textpos.centerx = box.get_rect().centerx
         textpos.centery = box.get_rect().centery
@@ -17,19 +30,32 @@ class Question(pygame.sprite.Sprite):
         self.rect = ((40,500),(40,32))
 
 class Answer(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, text):
         font = pygame.font.Font(None, 36)
         pygame.sprite.Sprite.__init__(self)
         box = pygame.Surface((80,32))
-        text = font.render("", 1, (0, 0, 0))
+        text = font.render(text+"_", 1, (0, 0, 0))
         textpos = text.get_rect()
-        textpos.centerx = box.get_rect().centerx
+        #textpos.centerx = box.get_rect().centerx
         textpos.centery = box.get_rect().centery
         box.fill(white)
         box.blit(text, textpos)
         self.image = box
         self.rect = ((185,500),(40,32))
 
+class Feedback(pygame.sprite.Sprite):
+    def __init__(self, text):
+        font = pygame.font.Font(None, 36)
+        pygame.sprite.Sprite.__init__(self)
+        box = pygame.Surface((400,32))
+        text = font.render(text, 1, (0, 0, 0))
+        textpos = text.get_rect()
+        #textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
+        box.fill(white)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((44,550),(400,32))
 
 
 if  __name__ == "__main__":
@@ -64,17 +90,65 @@ if  __name__ == "__main__":
             boxes.append(sbox)
 
     running = True
+    entered = ""
+    question_number = 0
+    feedback = None
+ 
+    actual_answer = quiz[question_number]['answer']
+    question_text = quiz[question_number]['question']
     while running:
         for event in pygame.event.get():
 	    if (event.type == pygame.QUIT or 
 	        event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 	        running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_0:
+                    entered = entered + "0"
+                elif event.key == pygame.K_1:
+                    entered = entered + "1"
+                elif event.key == pygame.K_2:
+                    entered = entered + "2"
+                elif event.key == pygame.K_3:
+                    entered = entered + "3"
+                elif event.key == pygame.K_4:
+                    entered = entered + "4"
+                elif event.key == pygame.K_5:
+                    entered = entered + "5"
+                elif event.key == pygame.K_6:
+                    entered = entered + "6"
+                elif event.key == pygame.K_7:
+                    entered = entered + "7"
+                elif event.key == pygame.K_8:
+                    entered = entered + "8"
+                elif event.key == pygame.K_9:
+                    entered = entered + "9"
+                elif event.key == pygame.K_BACKSPACE:
+                    entered = entered[:-1]
+                elif event.key == pygame.K_RETURN:
+                    ans = int(entered)
+                    if ans == actual_answer:
+                        question_number += 1
+                        if question_number == len(quiz):
+                            question_number = 0
+                        actual_answer = quiz[question_number]['answer'] 
+                        question_text = quiz[question_number]['question']
+                        entered = ""
+                        feedback = Feedback("Got last question, try another!")
+                    else:
+                        feedback = Feedback("Last try was wrong, try again.")
+                        # display pass button
+                   
+
+
         for b in boxes:
             window.blit(b.image,b.rect)
-        question = Question() # generate a question
+        question = Question(question_text) 
         window.blit(question.image, question.rect)
-        answer = Answer() 
+        answer = Answer(entered) 
         window.blit(answer.image, answer.rect)
+        if feedback:
+            window.blit(feedback.image, feedback.rect)
+   
     
         pygame.display.update()
         pos = pygame.mouse.get_pos()

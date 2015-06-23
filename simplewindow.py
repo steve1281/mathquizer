@@ -1,20 +1,7 @@
 #!/usr/bin/env python
-import random
 import pygame
 
-
-quiz = [
-         {'question': "7 x 6", 'answer': 42 },
-         {'question': "7 x 5", 'answer': 35 },
-         {'question': "7 x 4", 'answer': 28 },
-         {'question': "7 x 3", 'answer': 21 },
-         {'question': "7 x 2", 'answer': 14 },
-         {'question': "7 x 1", 'answer': 7 },
-         {'question': "8 x 2", 'answer': 16 },
-         {'question': "8 x 3", 'answer': 24 },
-         {'question': "8 x 4", 'answer': 32 },
-]
-random.shuffle(quiz)
+from quiz import quiz
  
 class Question(pygame.sprite.Sprite):
     def __init__(self, question_text):

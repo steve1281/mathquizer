@@ -10,6 +10,7 @@ class Question(pygame.sprite.Sprite):
         text = font.render("7 x 6 = ", 1, (10, 10, 20))
         textpos = text.get_rect()
         textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
         box.fill(gray_red)
         box.blit(text, textpos)
         self.image = box
@@ -23,6 +24,7 @@ class Answer(pygame.sprite.Sprite):
         text = font.render("", 1, (0, 0, 0))
         textpos = text.get_rect()
         textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
         box.fill(white)
         box.blit(text, textpos)
         self.image = box
@@ -54,6 +56,7 @@ if  __name__ == "__main__":
             text = font.render(str(i*j), 1, (10, 10, 20))
             textpos = text.get_rect()
             textpos.centerx = box.get_rect().centerx
+            textpos.centery = box.get_rect().centery
             box.fill(gray_red)
             box.blit(text, textpos)
             sbox.image = box

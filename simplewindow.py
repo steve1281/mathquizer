@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import random
 import pygame
 
 
@@ -14,6 +14,7 @@ quiz = [
          {'question': "8 x 3", 'answer': 24 },
          {'question': "8 x 4", 'answer': 32 },
 ]
+random.shuffle(quiz)
  
 class Question(pygame.sprite.Sprite):
     def __init__(self, question_text):
@@ -97,11 +98,13 @@ if  __name__ == "__main__":
     actual_answer = quiz[question_number]['answer']
     question_text = quiz[question_number]['question']
     while running:
+        window.fill(gray)
         for event in pygame.event.get():
 	    if (event.type == pygame.QUIT or 
 	        event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
 	        running = False
             if event.type == pygame.KEYDOWN:
+                feedback = None
                 if event.key == pygame.K_0:
                     entered = entered + "0"
                 elif event.key == pygame.K_1:
@@ -125,7 +128,10 @@ if  __name__ == "__main__":
                 elif event.key == pygame.K_BACKSPACE:
                     entered = entered[:-1]
                 elif event.key == pygame.K_RETURN:
-                    ans = int(entered)
+                    if len(entered) > 0:
+                        ans = int(entered)
+                    else:
+                        ans = -1  # always wrong
                     if ans == actual_answer:
                         question_number += 1
                         if question_number == len(quiz):

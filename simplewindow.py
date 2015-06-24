@@ -6,31 +6,12 @@ from quiz import quiz
 from sprites import Chicken, Question, Answer, Feedback, TimerBox, ScoreBox
 from colors import *
 
-def decode(event):
-    d = ""
-    if event.key == pygame.K_0:
-        d = "0"
-    elif event.key == pygame.K_1:
-        d = "1"
-    elif event.key == pygame.K_2:
-        d = "2"
-    elif event.key == pygame.K_3:
-        d = "3"
-    elif event.key == pygame.K_4:
-        d = "4"
-    elif event.key == pygame.K_5:
-        d = "5"
-    elif event.key == pygame.K_6:
-        d = "6"
-    elif event.key == pygame.K_7:
-        d = "7"
-    elif event.key == pygame.K_8:
-        d = "8"
-    elif event.key == pygame.K_9:
-        d = "9"
+def decode(key):
+    k = key - pygame.K_0
+    if k>=0 and k <= 9:
+        return str(k)
     else:
-        pass
-    return d
+        return ""
 
 if  __name__ == "__main__":
     pygame.init()
@@ -69,7 +50,10 @@ if  __name__ == "__main__":
     start_time = time.time()
     actual_answer = quiz[question_number]['answer']
     question_text = quiz[question_number]['question']
-
+    timerbox = TimerBox("0")
+    question = Question("")
+    answer = Answer("")
+    
     running = True
     while running:
         window.fill(gray)
@@ -79,7 +63,7 @@ if  __name__ == "__main__":
 	        running = False
             if event.type == pygame.KEYDOWN:
                 feedback = None
-                entered = entered + decode(event)
+                entered = entered + decode(event.key)
                 if event.key == pygame.K_BACKSPACE:
                     entered = entered[:-1]
                 elif event.key == pygame.K_RETURN:
@@ -107,9 +91,9 @@ if  __name__ == "__main__":
         for b in boxes:
             window.blit(b.image,b.rect)
 
-        question = Question(question_text) 
+        question.setText(question_text) 
         window.blit(question.image, question.rect)
-        answer = Answer(entered) 
+        answer.setText(entered) 
         window.blit(answer.image, answer.rect)
         if feedback:
             window.blit(feedback.image, feedback.rect)
@@ -117,7 +101,7 @@ if  __name__ == "__main__":
         score = int(ceil(score))
         if old_time <> score:
             old_time = score
-            timerbox = TimerBox(str(score))
+            timerbox.setScore(str(score))
         if timerbox:
             window.blit(timerbox.image, timerbox.rect)
 

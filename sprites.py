@@ -26,6 +26,19 @@ class Question(pygame.sprite.Sprite):
         self.image = box
         self.rect = ((40,500),(40,32))
 
+    def setText(self, question_text):
+        font = pygame.font.Font(None, 36)
+        box = pygame.Surface((140,32))
+        text = font.render(question_text + " = ", 1, (10, 10, 20))
+        textpos = text.get_rect()
+        textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
+        box.fill(gray_red)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((40,500),(40,32))
+
+
 class Answer(pygame.sprite.Sprite):
     def __init__(self, text):
         font = pygame.font.Font(None, 36)
@@ -39,6 +52,18 @@ class Answer(pygame.sprite.Sprite):
         box.blit(text, textpos)
         self.image = box
         self.rect = ((185,500),(40,32))
+
+    def setText(self, text):
+        font = pygame.font.Font(None, 36)
+        box = pygame.Surface((80,32))
+        text = font.render(text+"_", 1, (0, 0, 0))
+        textpos = text.get_rect()
+        textpos.centery = box.get_rect().centery
+        box.fill(white)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((185,500),(40,32))
+
 
 class Feedback(pygame.sprite.Sprite):
     def __init__(self, text):
@@ -68,6 +93,20 @@ class TimerBox(pygame.sprite.Sprite):
         self.image = box
         self.rect = ((640,150),(150,32))
 
+    def setScore(self, text):
+        font = pygame.font.Font(None, 36)
+        box = pygame.Surface((150,32))
+        text = font.render("Timer: "+text, 1, (0, 0, 0))
+        textpos = text.get_rect()
+        #textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
+        box.fill(gray)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((640,150),(150,32))
+
+
+
 class ScoreBox(pygame.sprite.Sprite):
     def __init__(self, text):
         font = pygame.font.Font(None, 36)
@@ -76,6 +115,17 @@ class ScoreBox(pygame.sprite.Sprite):
         text = font.render("Score: "+text, 1, (0, 0, 0))
         textpos = text.get_rect()
         #textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
+        box.fill(gray)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((640,250),(150,32))
+
+    def setText(self, text):
+        font = pygame.font.Font(None, 36)
+        box = pygame.Surface((150,32))
+        text = font.render("Score: "+text, 1, (0, 0, 0))
+        textpos = text.get_rect()
         textpos.centery = box.get_rect().centery
         box.fill(gray)
         box.blit(text, textpos)

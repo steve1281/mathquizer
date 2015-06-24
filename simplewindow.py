@@ -56,12 +56,12 @@ class Feedback(pygame.sprite.Sprite):
         self.image = box
         self.rect = ((44,550),(400,32))
 
-class ScoreBox(pygame.sprite.Sprite):
-    def __init__(self, text="00:00"):
+class TimerBox(pygame.sprite.Sprite):
+    def __init__(self, text):
         font = pygame.font.Font(None, 36)
         pygame.sprite.Sprite.__init__(self)
         box = pygame.Surface((150,32))
-        text = font.render(text, 1, (0, 0, 0))
+        text = font.render("Timer: "+text, 1, (0, 0, 0))
         textpos = text.get_rect()
         #textpos.centerx = box.get_rect().centerx
         textpos.centery = box.get_rect().centery
@@ -70,7 +70,19 @@ class ScoreBox(pygame.sprite.Sprite):
         self.image = box
         self.rect = ((640,150),(150,32))
 
-       
+class ScoreBox(pygame.sprite.Sprite):
+    def __init__(self, text):
+        font = pygame.font.Font(None, 36)
+        pygame.sprite.Sprite.__init__(self)
+        box = pygame.Surface((150,32))
+        text = font.render("Score: "+text, 1, (0, 0, 0))
+        textpos = text.get_rect()
+        #textpos.centerx = box.get_rect().centerx
+        textpos.centery = box.get_rect().centery
+        box.fill(gray)
+        box.blit(text, textpos)
+        self.image = box
+        self.rect = ((640,250),(150,32))
 
 if  __name__ == "__main__":
     pygame.init()
@@ -104,22 +116,20 @@ if  __name__ == "__main__":
             sbox.image = box
             sbox.rect = ((i*46,j*38),(40,32)) 
             boxes.append(sbox)
-    scorebox = ScoreBox("Score: 0")
+    timerbox = TimerBox("Score: 0")
     chickens = [ Chicken(600, 10), Chicken(660, 5), Chicken(720, 10)]
     chicken_count = 3
-
-
-
-    running = True
+    timer_set = 30  # about 3 minutes for 10 questions
     entered = ""
     question_number = 0
     question_count = 10
     feedback = None
- 
+    old_time = 0
+    start_time = time.time()
     actual_answer = quiz[question_number]['answer']
     question_text = quiz[question_number]['question']
-    start_time = time.time()
-    old_time = 0
+
+    running = True
     while running:
         window.fill(gray)
         for event in pygame.event.get():
@@ -181,13 +191,20 @@ if  __name__ == "__main__":
         window.blit(answer.image, answer.rect)
         if feedback:
             window.blit(feedback.image, feedback.rect)
-        score = time.time() - start_time
-        score = ceil(score)
+        score = timer_set - (time.time() - start_time )
+        score = int(ceil(score))
         if old_time <> score:
             old_time = score
-            scorebox = ScoreBox(str(score))
-        if scorebox:
-            window.blit(scorebox.image, scorebox.rect)
+            timerbox = TimerBox(str(score))
+        if timerbox:
+            window.blit(timerbox.image, timerbox.rect)
+
+        if score <= 0:
+            print "game over"
+
+        scorebox = ScoreBox(str(question_number))
+        window.blit(scorebox.image, scorebox.rect)
+
         for i in range(chicken_count):
             window.blit(chickens[i].image, chickens[i].rect)
    

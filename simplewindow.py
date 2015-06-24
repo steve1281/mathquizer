@@ -3,105 +3,45 @@ import time
 from math import ceil
 import pygame
 from quiz import quiz
+from sprites import Chicken, Question, Answer, Feedback, TimerBox, ScoreBox
+from colors import *
 
-class Chicken(pygame.sprite.Sprite):
-    def __init__(self, x, y):
-        pygame.sprite.Sprite.__init__(self)
-        box = pygame.Surface((50,50))
-        box.fill(gray)
-        pygame.draw.circle(box, yellow, (25, 25), 20)
-        self.rect = ((x, y),(0,0))
-        self.image = box
-
-
-class Question(pygame.sprite.Sprite):
-    def __init__(self, question_text):
-        font = pygame.font.Font(None, 36)
-        pygame.sprite.Sprite.__init__(self)
-        box = pygame.Surface((140,32))
-        text = font.render(question_text + " = ", 1, (10, 10, 20))
-        textpos = text.get_rect()
-        textpos.centerx = box.get_rect().centerx
-        textpos.centery = box.get_rect().centery
-        box.fill(gray_red)
-        box.blit(text, textpos)
-        self.image = box
-        self.rect = ((40,500),(40,32))
-
-class Answer(pygame.sprite.Sprite):
-    def __init__(self, text):
-        font = pygame.font.Font(None, 36)
-        pygame.sprite.Sprite.__init__(self)
-        box = pygame.Surface((80,32))
-        text = font.render(text+"_", 1, (0, 0, 0))
-        textpos = text.get_rect()
-        #textpos.centerx = box.get_rect().centerx
-        textpos.centery = box.get_rect().centery
-        box.fill(white)
-        box.blit(text, textpos)
-        self.image = box
-        self.rect = ((185,500),(40,32))
-
-class Feedback(pygame.sprite.Sprite):
-    def __init__(self, text):
-        font = pygame.font.Font(None, 36)
-        pygame.sprite.Sprite.__init__(self)
-        box = pygame.Surface((400,32))
-        text = font.render(text, 1, (0, 0, 0))
-        textpos = text.get_rect()
-        #textpos.centerx = box.get_rect().centerx
-        textpos.centery = box.get_rect().centery
-        box.fill(white)
-        box.blit(text, textpos)
-        self.image = box
-        self.rect = ((44,550),(400,32))
-
-class TimerBox(pygame.sprite.Sprite):
-    def __init__(self, text):
-        font = pygame.font.Font(None, 36)
-        pygame.sprite.Sprite.__init__(self)
-        box = pygame.Surface((150,32))
-        text = font.render("Timer: "+text, 1, (0, 0, 0))
-        textpos = text.get_rect()
-        #textpos.centerx = box.get_rect().centerx
-        textpos.centery = box.get_rect().centery
-        box.fill(gray)
-        box.blit(text, textpos)
-        self.image = box
-        self.rect = ((640,150),(150,32))
-
-class ScoreBox(pygame.sprite.Sprite):
-    def __init__(self, text):
-        font = pygame.font.Font(None, 36)
-        pygame.sprite.Sprite.__init__(self)
-        box = pygame.Surface((150,32))
-        text = font.render("Score: "+text, 1, (0, 0, 0))
-        textpos = text.get_rect()
-        #textpos.centerx = box.get_rect().centerx
-        textpos.centery = box.get_rect().centery
-        box.fill(gray)
-        box.blit(text, textpos)
-        self.image = box
-        self.rect = ((640,250),(150,32))
+def decode(event):
+    d = ""
+    if event.key == pygame.K_0:
+        d = "0"
+    elif event.key == pygame.K_1:
+        d = "1"
+    elif event.key == pygame.K_2:
+        d = "2"
+    elif event.key == pygame.K_3:
+        d = "3"
+    elif event.key == pygame.K_4:
+        d = "4"
+    elif event.key == pygame.K_5:
+        d = "5"
+    elif event.key == pygame.K_6:
+        d = "6"
+    elif event.key == pygame.K_7:
+        d = "7"
+    elif event.key == pygame.K_8:
+        d = "8"
+    elif event.key == pygame.K_9:
+        d = "9"
+    else:
+        pass
+    return d
 
 if  __name__ == "__main__":
     pygame.init()
     clock = pygame.time.Clock()
     fps = 30
  
-    white = pygame.Color(255, 255, 255)
-    red = pygame.Color(255, 0, 0)
-    gray_red = pygame.Color(200, 100, 100)
-    black = pygame.Color(0, 0, 0)
-    gray = pygame.Color(100, 100, 100)
-    yellow = pygame.Color(255, 255, 100)
-
-
     size = width, height = 800, 640
     font = pygame.font.Font(None, 36)
     window = pygame.display.set_mode(size)
     window.fill(gray)
-    boxes = [] #pygame.sprite.Group() 
+    boxes = []  
 
     for i in range(1, 13):
         for j in range(1, 13):
@@ -116,10 +56,11 @@ if  __name__ == "__main__":
             sbox.image = box
             sbox.rect = ((i*46,j*38),(40,32)) 
             boxes.append(sbox)
-    timerbox = TimerBox("Score: 0")
+
+    timerbox = TimerBox("")
     chickens = [ Chicken(600, 10), Chicken(660, 5), Chicken(720, 10)]
     chicken_count = 3
-    timer_set = 30  # about 3 minutes for 10 questions
+    timer_set = 30  
     entered = ""
     question_number = 0
     question_count = 10
@@ -138,33 +79,14 @@ if  __name__ == "__main__":
 	        running = False
             if event.type == pygame.KEYDOWN:
                 feedback = None
-                if event.key == pygame.K_0:
-                    entered = entered + "0"
-                elif event.key == pygame.K_1:
-                    entered = entered + "1"
-                elif event.key == pygame.K_2:
-                    entered = entered + "2"
-                elif event.key == pygame.K_3:
-                    entered = entered + "3"
-                elif event.key == pygame.K_4:
-                    entered = entered + "4"
-                elif event.key == pygame.K_5:
-                    entered = entered + "5"
-                elif event.key == pygame.K_6:
-                    entered = entered + "6"
-                elif event.key == pygame.K_7:
-                    entered = entered + "7"
-                elif event.key == pygame.K_8:
-                    entered = entered + "8"
-                elif event.key == pygame.K_9:
-                    entered = entered + "9"
-                elif event.key == pygame.K_BACKSPACE:
+                entered = entered + decode(event)
+                if event.key == pygame.K_BACKSPACE:
                     entered = entered[:-1]
                 elif event.key == pygame.K_RETURN:
                     if len(entered) > 0:
                         ans = int(entered)
                     else:
-                        ans = -1  # always wrong
+                        ans = -1  
                     if ans == actual_answer:
                         question_number += 1
                         if question_number == len(quiz):
@@ -180,11 +102,11 @@ if  __name__ == "__main__":
                         chicken_count -= 1
                         if chicken_count < 0:
                             chicken_count = 0
-
                         # display pass button
 
         for b in boxes:
             window.blit(b.image,b.rect)
+
         question = Question(question_text) 
         window.blit(question.image, question.rect)
         answer = Answer(entered) 
@@ -220,10 +142,9 @@ if  __name__ == "__main__":
                 pygame.draw.rect(s2.image, yellow, pygame.Rect((0,0),(44,32)),3)
             else:
                 pygame.draw.rect(s.image, gray_red, pygame.Rect((0,0),(44,32)),3)
+
         clock.tick(fps) 
         pygame.display.update()
 
  
     pygame.quit()
-
-

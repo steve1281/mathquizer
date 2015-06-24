@@ -53,79 +53,95 @@ if  __name__ == "__main__":
     timerbox = TimerBox("0")
     question = Question("")
     answer = Answer("")
-    
+    scorebox = ScoreBox("")
+
+    running_game = True
+    running_intro = False
+    running_done = False    
     running = True
     while running:
         window.fill(gray)
-        for event in pygame.event.get():
-	    if (event.type == pygame.QUIT or 
-	        event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-	        running = False
-            if event.type == pygame.KEYDOWN:
-                feedback = None
-                entered = entered + decode(event.key)
-                if event.key == pygame.K_BACKSPACE:
-                    entered = entered[:-1]
-                elif event.key == pygame.K_RETURN:
-                    if len(entered) > 0:
-                        ans = int(entered)
-                    else:
-                        ans = -1  
-                    if ans == actual_answer:
-                        question_number += 1
-                        if question_number == len(quiz):
-                            question_number = 0
-                        if question_number == question_count: 
-                            endtime = time.time()
-                        actual_answer = quiz[question_number]['answer'] 
-                        question_text = quiz[question_number]['question']
-                        entered = ""
-                        feedback = Feedback("Got last question, try another!")
-                    else:
-                        feedback = Feedback("Last try was wrong, try again.")
-                        chicken_count -= 1
-                        if chicken_count < 0:
-                            chicken_count = 0
-                        # display pass button
+        if running_game:
+            for event in pygame.event.get():
+                if (event.type == pygame.QUIT or 
+                    event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    running = False
+                if event.type == pygame.KEYDOWN:
+                    feedback = None
+                    entered = entered + decode(event.key)
+                    if event.key == pygame.K_BACKSPACE:
+                        entered = entered[:-1]
+                    elif event.key == pygame.K_RETURN:
+                        if len(entered) > 0:
+                            ans = int(entered)
+                        else:
+                            ans = -1  
+                        if ans == actual_answer:
+                            question_number += 1
+                            if question_number == len(quiz):
+                                question_number = 0
+                            if question_number == question_count: 
+                                endtime = time.time()
+                            actual_answer = quiz[question_number]['answer'] 
+                            question_text = quiz[question_number]['question']
+                            entered = ""
+                            feedback = Feedback("Got last question, try another!")
+                        else:
+                            feedback = Feedback("Last try was wrong, try again.")
+                            chicken_count -= 1
+                            if chicken_count < 0:
+                                chicken_count = 0
+                            # display pass button
 
-        for b in boxes:
-            window.blit(b.image,b.rect)
+            for b in boxes:
+                window.blit(b.image,b.rect)
 
-        question.setText(question_text) 
-        window.blit(question.image, question.rect)
-        answer.setText(entered) 
-        window.blit(answer.image, answer.rect)
-        if feedback:
-            window.blit(feedback.image, feedback.rect)
-        score = timer_set - (time.time() - start_time )
-        score = int(ceil(score))
-        if old_time <> score:
-            old_time = score
-            timerbox.setScore(str(score))
-        if timerbox:
-            window.blit(timerbox.image, timerbox.rect)
+            question.setText(question_text) 
+            window.blit(question.image, question.rect)
+            answer.setText(entered) 
+            window.blit(answer.image, answer.rect)
+            if feedback:
+                window.blit(feedback.image, feedback.rect)
+            score = timer_set - (time.time() - start_time )
+            score = int(ceil(score))
+            if old_time <> score:
+                old_time = score
+                timerbox.setScore(str(score))
+            if timerbox:
+                window.blit(timerbox.image, timerbox.rect)
 
-        if score <= 0:
-            print "game over"
+            if score <= 0:
+                running_game = False
+                running_done = True
 
-        scorebox = ScoreBox(str(question_number))
-        window.blit(scorebox.image, scorebox.rect)
+            scorebox.setText(str(question_number))
+            window.blit(scorebox.image, scorebox.rect)
 
-        for i in range(chicken_count):
-            window.blit(chickens[i].image, chickens[i].rect)
+            for i in range(chicken_count):
+                window.blit(chickens[i].image, chickens[i].rect)
    
-        pos = pygame.mouse.get_pos()
-        for i in range(len(boxes)):
-            s = boxes[i]
-            r = pygame.Rect( s.rect)
-            if r.collidepoint(pos[0],pos[1]):
-                pygame.draw.rect(s.image, yellow, pygame.Rect((0,0),(44,32)),3)
-                s1 = boxes[i % 12]
-                s2 = boxes[i - i% 12]
-                pygame.draw.rect(s1.image, yellow, pygame.Rect((0,0),(44,32)),3)
-                pygame.draw.rect(s2.image, yellow, pygame.Rect((0,0),(44,32)),3)
-            else:
-                pygame.draw.rect(s.image, gray_red, pygame.Rect((0,0),(44,32)),3)
+            pos = pygame.mouse.get_pos()
+            for i in range(len(boxes)):
+                s = boxes[i]
+                r = pygame.Rect( s.rect)
+                if r.collidepoint(pos[0],pos[1]):
+                    pygame.draw.rect(s.image, yellow, pygame.Rect((0,0),(44,32)),3)
+                    s1 = boxes[i % 12]
+                    s2 = boxes[i - i% 12]
+                    pygame.draw.rect(s1.image, yellow, pygame.Rect((0,0),(44,32)),3)
+                    pygame.draw.rect(s2.image, yellow, pygame.Rect((0,0),(44,32)),3)
+                else:
+                    pygame.draw.rect(s.image, gray_red, pygame.Rect((0,0),(44,32)),3)
+        elif running_done:
+            for event in pygame.event.get():
+                if (event.type == pygame.QUIT or 
+                    event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                    running = False
+            scorebox.setText(str(question_number))
+            window.blit(scorebox.image, scorebox.rect)
+            for i in range(chicken_count):
+                window.blit(chickens[i].image, chickens[i].rect)
+
 
         clock.tick(fps) 
         pygame.display.update()

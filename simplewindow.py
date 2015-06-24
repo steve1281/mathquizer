@@ -1,7 +1,18 @@
 #!/usr/bin/env python
+import time
+from math import ceil
 import pygame
-
 from quiz import quiz
+
+class Chicken(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        box = pygame.Surface((50,50))
+        box.fill(gray)
+        pygame.draw.circle(box, yellow, (25, 25), 20)
+        self.rect = ((x, y),(0,0))
+        self.image = box
+
 
 class Question(pygame.sprite.Sprite):
     def __init__(self, question_text):
@@ -57,13 +68,15 @@ class ScoreBox(pygame.sprite.Sprite):
         box.fill(gray)
         box.blit(text, textpos)
         self.image = box
-        self.rect = ((640,50),(150,32))
+        self.rect = ((640,150),(150,32))
 
        
 
 if  __name__ == "__main__":
     pygame.init()
-
+    clock = pygame.time.Clock()
+    fps = 30
+ 
     white = pygame.Color(255, 255, 255)
     red = pygame.Color(255, 0, 0)
     gray_red = pygame.Color(200, 100, 100)
@@ -92,14 +105,21 @@ if  __name__ == "__main__":
             sbox.rect = ((i*46,j*38),(40,32)) 
             boxes.append(sbox)
     scorebox = ScoreBox("Score: 0")
+    chickens = [ Chicken(600, 10), Chicken(660, 5), Chicken(720, 10)]
+    chicken_count = 3
+
+
 
     running = True
     entered = ""
     question_number = 0
+    question_count = 10
     feedback = None
  
     actual_answer = quiz[question_number]['answer']
     question_text = quiz[question_number]['question']
+    start_time = time.time()
+    old_time = 0
     while running:
         window.fill(gray)
         for event in pygame.event.get():
@@ -139,15 +159,19 @@ if  __name__ == "__main__":
                         question_number += 1
                         if question_number == len(quiz):
                             question_number = 0
+                        if question_number == question_count: 
+                            endtime = time.time()
                         actual_answer = quiz[question_number]['answer'] 
                         question_text = quiz[question_number]['question']
                         entered = ""
                         feedback = Feedback("Got last question, try another!")
                     else:
                         feedback = Feedback("Last try was wrong, try again.")
-                        # display pass button
-                   
+                        chicken_count -= 1
+                        if chicken_count < 0:
+                            chicken_count = 0
 
+                        # display pass button
 
         for b in boxes:
             window.blit(b.image,b.rect)
@@ -157,12 +181,16 @@ if  __name__ == "__main__":
         window.blit(answer.image, answer.rect)
         if feedback:
             window.blit(feedback.image, feedback.rect)
+        score = time.time() - start_time
+        score = ceil(score)
+        if old_time <> score:
+            old_time = score
+            scorebox = ScoreBox(str(score))
         if scorebox:
             window.blit(scorebox.image, scorebox.rect)
-
+        for i in range(chicken_count):
+            window.blit(chickens[i].image, chickens[i].rect)
    
-    
-        pygame.display.update()
         pos = pygame.mouse.get_pos()
         for i in range(len(boxes)):
             s = boxes[i]
@@ -175,6 +203,8 @@ if  __name__ == "__main__":
                 pygame.draw.rect(s2.image, yellow, pygame.Rect((0,0),(44,32)),3)
             else:
                 pygame.draw.rect(s.image, gray_red, pygame.Rect((0,0),(44,32)),3)
+        clock.tick(fps) 
+        pygame.display.update()
 
  
     pygame.quit()

@@ -106,7 +106,7 @@ if  __name__ == "__main__":
             score = int(ceil(score))
             if old_time <> score:
                 old_time = score
-                timerbox.setScore(str(score))
+                timerbox.setText(str(score))
             if timerbox:
                 window.blit(timerbox.image, timerbox.rect)
 
